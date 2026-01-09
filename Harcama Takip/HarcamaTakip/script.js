@@ -1,11 +1,7 @@
-// Harcama Takip Uygulaması - Ana JavaScript Dosyası
-
-// Uygulama durumu
 let expenses = [];
 let currentSort = 'newest';
 let expenseToDelete = null;
 
-// DOM Elementleri
 const expenseForm = document.getElementById('expenseForm');
 const descriptionInput = document.getElementById('description');
 const amountInput = document.getElementById('amount');
@@ -26,54 +22,51 @@ const modalMessage = document.getElementById('modalMessage');
 const modalCancel = document.getElementById('modalCancel');
 const modalConfirm = document.getElementById('modalConfirm');
 
-// Uygulama başlangıcı
 document.addEventListener('DOMContentLoaded', initApp);
 
-// Uygulamayı başlat
 function initApp() {
-    // Bugünün tarihini varsayılan olarak ayarla
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
     dateInput.max = today;
     
-    // LocalStorage'dan verileri yükle
+   
     loadExpenses();
     
-    // Olay dinleyicilerini ekle
+   
     setupEventListeners();
     
-    // Açıklama karakter sayacını güncelle
+ 
     updateCharCount();
     
-    // Harcamaları render et
+   
     renderExpenses();
     
-    // İstatistikleri güncelle
+ 
     updateStatistics();
 }
 
-// Olay dinleyicilerini kur
+
 function setupEventListeners() {
-    // Form gönderimi
+   
     expenseForm.addEventListener('submit', handleAddExpense);
     
-    // Sıralama değişikliği
+   
     sortBySelect.addEventListener('change', handleSortChange);
     
-    // Açıklama karakter sayımı
+   
     descriptionInput.addEventListener('input', updateCharCount);
     
-    // Tümünü temizle butonu
+   
     clearAllBtn.addEventListener('click', handleClearAll);
     
-    // Dışa aktar butonu
+   
     exportBtn.addEventListener('click', handleExport);
     
-    // Modal butonları
+   
     modalCancel.addEventListener('click', closeModal);
     modalConfirm.addEventListener('click', confirmDelete);
     
-    // Modal dışına tıklama
+  
     confirmModal.addEventListener('click', (e) => {
         if (e.target === confirmModal) {
             closeModal();
@@ -81,22 +74,22 @@ function setupEventListeners() {
     });
 }
 
-// Harcama ekleme işlemi
+
 function handleAddExpense(e) {
     e.preventDefault();
     
-    // Form verilerini al
+   
     const description = descriptionInput.value.trim();
     const amount = parseFloat(amountInput.value);
     const category = categorySelect.value;
     const date = dateInput.value;
     
-    // Form doğrulama
+   
     if (!validateForm(description, amount, category, date)) {
         return;
     }
     
-    // Yeni harcama objesi oluştur
+   
     const newExpense = {
         id: Date.now(),
         description,
@@ -105,26 +98,26 @@ function handleAddExpense(e) {
         date
     };
     
-    // Harcamalar dizisine ekle
+   
     expenses.push(newExpense);
     
-    // LocalStorage'a kaydet
+    
     saveExpenses();
     
-    // Harcamaları render et
+ 
     renderExpenses();
     
-    // İstatistikleri güncelle
+   
     updateStatistics();
     
-    // Formu temizle
+   
     clearForm();
     
-    // Başarılı mesajı göster
+  
     showToast('Harcama başarıyla eklendi!', 'success');
 }
 
-// Form doğrulama
+
 function validateForm(description, amount, category, date) {
     if (!description) {
         showToast('Lütfen harcama açıklaması giriniz.', 'error');
@@ -153,7 +146,7 @@ function validateForm(description, amount, category, date) {
     return true;
 }
 
-// Harcamaları LocalStorage'dan yükle
+
 function loadExpenses() {
     try {
         const storedExpenses = localStorage.getItem('expenseTrackerData');
@@ -166,7 +159,7 @@ function loadExpenses() {
     }
 }
 
-// Harcamaları LocalStorage'a kaydet
+
 function saveExpenses() {
     try {
         localStorage.setItem('expenseTrackerData', JSON.stringify(expenses));
@@ -176,9 +169,9 @@ function saveExpenses() {
     }
 }
 
-// Harcamaları render et
+
 function renderExpenses() {
-    // Harcamaları sırala
+  
     const sortedExpenses = sortExpenses(expenses, currentSort);
     
     if (sortedExpenses.length === 0) {
@@ -192,7 +185,7 @@ function renderExpenses() {
         return;
     }
     
-    // Harcama listesini oluştur
+    
     expenseListElement.innerHTML = sortedExpenses.map(expense => `
         <div class="expense-item" data-id="${expense.id}">
             <div class="expense-description">${escapeHTML(expense.description)}</div>
@@ -210,7 +203,7 @@ function renderExpenses() {
     `).join('');
 }
 
-// Harcamaları sırala
+
 function sortExpenses(expenses, sortType) {
     const sorted = [...expenses];
     
@@ -228,20 +221,20 @@ function sortExpenses(expenses, sortType) {
     }
 }
 
-// Sıralama değişikliği işlemi
+
 function handleSortChange(e) {
     currentSort = e.target.value;
     renderExpenses();
 }
 
-// Harcama silme
+
 function deleteExpense(id) {
     expenseToDelete = id;
     modalMessage.textContent = 'Bu harcamayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.';
     openModal();
 }
 
-// Silme işlemini onayla
+
 function confirmDelete() {
     if (expenseToDelete) {
         expenses = expenses.filter(expense => expense.id !== expenseToDelete);
@@ -254,7 +247,7 @@ function confirmDelete() {
     }
 }
 
-// Tümünü temizle işlemi
+
 function handleClearAll() {
     if (expenses.length === 0) {
         showToast('Temizlenecek harcama bulunamadı.', 'info');
@@ -266,7 +259,7 @@ function handleClearAll() {
     openModal();
 }
 
-// Dışa aktar işlemi
+
 function handleExport() {
     if (expenses.length === 0) {
         showToast('Dışa aktarılacak veri bulunamadı.', 'info');
@@ -286,32 +279,32 @@ function handleExport() {
     showToast('Harcamalar başarıyla dışa aktarıldı.', 'success');
 }
 
-// İstatistikleri güncelle
+
 function updateStatistics() {
-    // Toplam harcama
+    
     const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
     totalAmountElement.textContent = formatCurrency(total);
     listTotalElement.textContent = formatCurrency(total);
     
-    // Ortalama harcama
+  
     const average = expenses.length > 0 ? total / expenses.length : 0;
     listAverageElement.textContent = formatCurrency(average);
     
-    // Harcama sayısı
+   
     listCountElement.textContent = expenses.length;
     
-    // Kategori dağılımını güncelle
+  
     updateCategorySummary();
 }
 
-// Kategori özetini güncelle
+
 function updateCategorySummary() {
     if (expenses.length === 0) {
         categorySummaryElement.innerHTML = '<div class="empty-summary">Henüz harcama eklenmedi</div>';
         return;
     }
     
-    // Kategorilere göre grupla
+   
     const categoryTotals = {};
     const categoryCounts = {};
     
@@ -327,7 +320,7 @@ function updateCategorySummary() {
         categoryCounts[category] += 1;
     });
     
-    // HTML oluştur
+   
     const categories = ['Gıda', 'Ulaşım', 'Eğlence', 'Fatura', 'Diğer'];
     const total = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
     
@@ -351,7 +344,7 @@ function updateCategorySummary() {
     }).join('');
 }
 
-// Formu temizle
+
 function clearForm() {
     expenseForm.reset();
     const today = new Date().toISOString().split('T')[0];
@@ -360,7 +353,7 @@ function clearForm() {
     descriptionInput.focus();
 }
 
-// Karakter sayacını güncelle
+
 function updateCharCount() {
     const count = descriptionInput.value.length;
     charCountElement.textContent = `${count}/100`;
@@ -374,7 +367,7 @@ function updateCharCount() {
     }
 }
 
-// Modal işlemleri
+
 function openModal() {
     confirmModal.classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -386,7 +379,7 @@ function closeModal() {
     expenseToDelete = null;
 }
 
-// Yardımcı fonksiyonlar
+
 function formatCurrency(amount) {
     return new Intl.NumberFormat('tr-TR', {
         style: 'currency',
@@ -411,7 +404,7 @@ function escapeHTML(text) {
 }
 
 function showToast(message, type = 'info') {
-    // Toast container oluştur
+  
     let toastContainer = document.querySelector('.toast-container');
     if (!toastContainer) {
         toastContainer = document.createElement('div');
@@ -419,7 +412,7 @@ function showToast(message, type = 'info') {
         document.body.appendChild(toastContainer);
     }
     
-    // Toast elementi oluştur
+   
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
@@ -431,16 +424,16 @@ function showToast(message, type = 'info') {
     
     toastContainer.appendChild(toast);
     
-    // Animasyon ekle
+  
     setTimeout(() => toast.classList.add('show'), 10);
     
-    // Otomatik kaldır
+ 
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 3000);
     
-    // Kapatma butonu ekle
+   
     const closeBtn = document.createElement('button');
     closeBtn.innerHTML = '<i class="fas fa-times"></i>';
     closeBtn.className = 'toast-close';
@@ -452,7 +445,7 @@ function showToast(message, type = 'info') {
     toast.querySelector('.toast-content').appendChild(closeBtn);
 }
 
-// Toast stillerini dinamik olarak ekle
+
 const toastStyles = document.createElement('style');
 toastStyles.textContent = `
     .toast-container {
